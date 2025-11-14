@@ -1,6 +1,7 @@
 import { GoogleGenAI, Chat, FunctionDeclaration, Type, GenerateContentResponse, SendMessageParameters } from "@google/genai";
 
-// FIX: Use `process.env.API_KEY` to align with the coding guidelines and resolve the TypeScript error.
+// FIX: Switched to process.env.API_KEY to resolve the TypeScript error "Property 'env' does not exist on type 'ImportMeta'"
+// and to align with @google/genai SDK guidelines.
 const API_KEY = process.env.API_KEY;
 
 // Gracefully handle the missing API key by initializing 'ai' as null
@@ -39,8 +40,8 @@ class GeminiService {
 
   constructor() {
     if (!ai) {
-      // FIX: Updated error message to reflect using API_KEY from process.env.
-      const errorMessage = "AI service is not configured. The API_KEY is missing.";
+      // FIX: Updated error message to reflect the use of process.env.API_KEY.
+      const errorMessage = "AI service is not configured. The API_KEY environment variable is missing.";
       console.error(errorMessage);
       this.initializationError = errorMessage;
       return;
@@ -56,7 +57,6 @@ class GeminiService {
   }
 
   // This function now calls the live PHP backend API.
-  // FIX: Changed return type from `Promise<object>` to `Promise<Record<string, unknown>>` to match the type expected by the Gemini API for function call responses.
   private async find_products(query: string): Promise<Record<string, unknown>> {
     console.log(`Calling backend API with query: "${query}"`);
 
