@@ -1,13 +1,10 @@
-
 import { GoogleGenAI, Chat, FunctionDeclaration, Type, GenerateContentResponse } from "@google/genai";
 
 const API_KEY = process.env.API_KEY;
 
-if (!API_KEY) {
-  throw new Error("API_KEY environment variable not set");
-}
-
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+// Gracefully handle the missing API key by initializing 'ai' as null
+// instead of throwing an error that crashes the entire application.
+const ai = API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
 
 const model = 'gemini-2.5-flash';
 
@@ -36,9 +33,17 @@ const findProductsFunctionDeclaration: FunctionDeclaration = {
 
 
 class GeminiService {
-  private chat: Chat;
+  private chat: Chat | null = null;
+  private initializationError: string | null = null;
 
   constructor() {
+    if (!ai) {
+      const errorMessage = "AI service is not configured. The API_KEY is missing.";
+      console.error(errorMessage);
+      this.initializationError = errorMessage;
+      return;
+    }
+
     this.chat = ai.chats.create({
       model: model,
       config: {
@@ -76,6 +81,13 @@ class GeminiService {
 
 
   async sendMessage(message: string): Promise<string> {
+    if (this.initializationError) {
+      return this.initializationError;
+    }
+    if (!this.chat) {
+        return "Chat session is not initialized. Please refresh and try again.";
+    }
+
     try {
       let response: GenerateContentResponse = await this.chat.sendMessage({ message });
 
@@ -89,18 +101,18 @@ class GeminiService {
           const apiResult = await this.find_products(query);
 
           // Send the function result back to the model
-          const toolResponsePart = {
-            toolResponse: {
-                id: call.id,
+          // FIX: The part for a function response should have a `functionResponse` key, not `toolResponse`.
+          // The `id` from the function call is also not part of the response part.
+          const functionResponsePart = {
+            functionResponse: {
                 name: call.name,
                 response: {
                     result: apiResult,
                 }
             }
           };
-
-          // FIX: The chat.sendMessage method expects an object with a 'message' property.
-          response = await this.chat.sendMessage({ message: [toolResponsePart] });
+          
+          response = await this.chat.sendMessage({ message: [functionResponsePart] });
         }
       }
       
@@ -108,7 +120,7 @@ class GeminiService {
 
     } catch (error) {
       console.error("Gemini API error:", error);
-      throw new Error("Failed to get a response from the AI.");
+      return "Sorry, I'm having trouble connecting to my brain right now. Please try again in a moment.";
     }
   }
 }
