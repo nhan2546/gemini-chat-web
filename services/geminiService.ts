@@ -1,7 +1,7 @@
 import { GoogleGenAI, Chat, FunctionDeclaration, Type, GenerateContentResponse, SendMessageParameters } from "@google/genai";
 
-// Vite requires environment variables exposed to the client to be prefixed with VITE_
-const API_KEY = process.env.VITE_API_KEY;
+// FIX: Use `process.env.API_KEY` to align with the coding guidelines and resolve the TypeScript error.
+const API_KEY = process.env.API_KEY;
 
 // Gracefully handle the missing API key by initializing 'ai' as null
 // instead of throwing an error that crashes the entire application.
@@ -39,7 +39,8 @@ class GeminiService {
 
   constructor() {
     if (!ai) {
-      const errorMessage = "AI service is not configured. The VITE_API_KEY is missing.";
+      // FIX: Updated error message to reflect using API_KEY from process.env.
+      const errorMessage = "AI service is not configured. The API_KEY is missing.";
       console.error(errorMessage);
       this.initializationError = errorMessage;
       return;
