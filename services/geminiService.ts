@@ -1,6 +1,7 @@
-import { GoogleGenAI, Chat, FunctionDeclaration, Type, GenerateContentResponse } from "@google/genai";
+import { GoogleGenAI, Chat, FunctionDeclaration, Type, GenerateContentResponse, SendMessageParameters } from "@google/genai";
 
-const API_KEY = process.env.API_KEY;
+// Vite requires environment variables exposed to the client to be prefixed with VITE_
+const API_KEY = process.env.VITE_API_KEY;
 
 // Gracefully handle the missing API key by initializing 'ai' as null
 // instead of throwing an error that crashes the entire application.
@@ -38,7 +39,7 @@ class GeminiService {
 
   constructor() {
     if (!ai) {
-      const errorMessage = "AI service is not configured. The API_KEY is missing.";
+      const errorMessage = "AI service is not configured. The VITE_API_KEY is missing.";
       console.error(errorMessage);
       this.initializationError = errorMessage;
       return;
@@ -54,7 +55,8 @@ class GeminiService {
   }
 
   // This function now calls the live PHP backend API.
-  private async find_products(query: string): Promise<object> {
+  // FIX: Changed return type from `Promise<object>` to `Promise<Record<string, unknown>>` to match the type expected by the Gemini API for function call responses.
+  private async find_products(query: string): Promise<Record<string, unknown>> {
     console.log(`Calling backend API with query: "${query}"`);
 
     // This is the URL for the user's PHP web service.
@@ -100,19 +102,18 @@ class GeminiService {
           const query = call.args.query as string;
           const apiResult = await this.find_products(query);
 
-          // Send the function result back to the model
-          // FIX: The part for a function response should have a `functionResponse` key, not `toolResponse`.
-          // The `id` from the function call is also not part of the response part.
           const functionResponsePart = {
             functionResponse: {
                 name: call.name,
-                response: {
-                    result: apiResult,
-                }
+                response: apiResult,
             }
           };
           
-          response = await this.chat.sendMessage({ message: [functionResponsePart] });
+          const message: SendMessageParameters = {
+            message: [functionResponsePart]
+          };
+
+          response = await this.chat.sendMessage(message);
         }
       }
       
