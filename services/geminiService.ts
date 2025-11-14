@@ -47,7 +47,28 @@ class GeminiService {
       },
     });
   }
+private async find_products(query: string): Promise<object> {
+    console.log(`Calling backend API for query: "${query}"`);
 
+    // URL của trang web PHP của bạn
+    const apiUrl = `https://web-chat-bot-php.onrender.com/api.php?q=${encodeURIComponent(query)}`;
+
+    try {
+      const response = await fetch(apiUrl);
+      
+      if (!response.ok) {
+        console.error("API Error Response:", await response.text());
+        return { error: "Failed to fetch products from the server." };
+      }
+      
+      const data = await response.json();
+      return data;
+
+    } catch (error) {
+      console.error("Failed to call backend API:", error);
+      return { error: "Could not connect to the product database." };
+    }
+}
   // A mock function to simulate calling the PHP backend API
   private async find_products(query: string): Promise<object> {
     console.log(`Searching for products with query: "${query}"`);
