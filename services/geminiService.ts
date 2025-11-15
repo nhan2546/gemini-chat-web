@@ -1,7 +1,7 @@
 import { GoogleGenAI, Chat, FunctionDeclaration, Type, GenerateContentResponse, SendMessageParameters } from "@google/genai";
 
 // Fix: Use `process.env.API_KEY` as per the coding guidelines. This resolves the TypeScript error regarding `import.meta.env`.
-const API_KEY = process.env.API_KEY;
+const API_KEY = process.env.VITE_API_KEY;
 
 // Gracefully handle the missing API key by initializing 'ai' as null
 // instead of throwing an error that crashes the entire application.
