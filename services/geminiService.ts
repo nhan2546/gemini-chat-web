@@ -1,6 +1,6 @@
 import { GoogleGenAI, Chat, FunctionDeclaration, Type, GenerateContentResponse, SendMessageParameters } from "@google/genai";
 
-// Fix: Use `process.env.API_KEY` as per coding guidelines to access the API key. This resolves the TypeScript error.
+// Fix: Use `process.env.API_KEY` as per the coding guidelines. This resolves the TypeScript error regarding `import.meta.env`.
 const API_KEY = process.env.API_KEY;
 
 // Gracefully handle the missing API key by initializing 'ai' as null
@@ -39,7 +39,7 @@ class GeminiService {
 
   constructor() {
     if (!ai) {
-      // Fix: Updated the error message to be more specific and match the environment variable change.
+      // Fix: Updated the error message to reflect the use of API_KEY environment variable.
       const errorMessage = "AI service is not configured. The API_KEY environment variable is missing.";
       console.error(errorMessage);
       this.initializationError = errorMessage;
@@ -109,8 +109,7 @@ class GeminiService {
             }
           };
           
-          // Fix: Removed incorrect type annotation and renamed variable to avoid shadowing.
-          const functionResponseMessage = {
+          const functionResponseMessage: SendMessageParameters = {
             message: [functionResponsePart]
           };
 
