@@ -1,11 +1,12 @@
 import { GoogleGenAI, Chat, FunctionDeclaration, Type, GenerateContentResponse, SendMessageParameters } from "@google/genai";
 
-// Fix: Use `process.env.API_KEY` as per the coding guidelines. This resolves the TypeScript error regarding `import.meta.env`.
-const API_KEY = process.env.VITE_API_KEY;
+// Fix: Use process.env.API_KEY as per the coding guidelines.
+const apiKey = process.env.API_KEY;
 
-// Gracefully handle the missing API key by initializing 'ai' as null
-// instead of throwing an error that crashes the entire application.
-const ai = API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
+let ai: GoogleGenAI | null = null;
+if (apiKey) {
+  ai = new GoogleGenAI({ apiKey });
+}
 
 const model = 'gemini-2.5-flash';
 
@@ -35,24 +36,22 @@ const findProductsFunctionDeclaration: FunctionDeclaration = {
 
 class GeminiService {
   private chat: Chat | null = null;
-  private initializationError: string | null = null;
+  private isInitialized = false;
 
   constructor() {
-    if (!ai) {
-      // Fix: Updated the error message to reflect the use of API_KEY environment variable.
-      const errorMessage = "AI service is not configured. The API_KEY environment variable is missing.";
-      console.error(errorMessage);
-      this.initializationError = errorMessage;
-      return;
+    if (ai) {
+      this.chat = ai.chats.create({
+        model: model,
+        config: {
+          systemInstruction,
+          tools: [{ functionDeclarations: [findProductsFunctionDeclaration] }],
+        },
+      });
+      this.isInitialized = true;
+    } else {
+        // Fix: Update error message to refer to API_KEY.
+        console.error("API_KEY is not configured. The application will not be able to connect to the AI service.");
     }
-
-    this.chat = ai.chats.create({
-      model: model,
-      config: {
-        systemInstruction,
-        tools: [{ functionDeclarations: [findProductsFunctionDeclaration] }],
-      },
-    });
   }
 
   // This function now calls the live PHP backend API.
@@ -69,7 +68,7 @@ class GeminiService {
       if (!response.ok) {
         const errorText = await response.text();
         console.error(`API Error: Status ${response.status} -`, errorText);
-        return { error: "Failed to fetch products from the server." };
+        return { error: `Failed to fetch products. The server responded with status: ${response.status}` };
       }
 
       const data = await response.json();
@@ -77,17 +76,15 @@ class GeminiService {
 
     } catch (error) {
       console.error("Failed to call backend API:", error);
-      return { error: "Could not connect to the product database." };
+      return { error: "Could not connect to the product database. Please check the backend server." };
     }
   }
 
 
   async sendMessage(message: string): Promise<string> {
-    if (this.initializationError) {
-      return this.initializationError;
-    }
-    if (!this.chat) {
-        return "Chat session is not initialized. Please refresh and try again.";
+    if (!this.isInitialized || !this.chat) {
+        // Fix: Update error message to refer to API_KEY.
+        return "AI service is not configured. The API_KEY environment variable is missing.";
     }
 
     try {
