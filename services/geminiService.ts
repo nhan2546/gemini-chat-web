@@ -71,7 +71,7 @@ class GeminiService {
       console.error('NEXT_PUBLIC_BACKEND_URL is not set');
       return { error: 'Backend URL missing' };
     }
-    const apiUrl = `${baseUrl}/api/products?q=${encodeURIComponent(query)}`;
+    const apiUrl = `${baseUrl}/api.php?q=${encodeURIComponent(query)}`;
 
     try {
       const resp = await fetch(apiUrl);
