@@ -85,8 +85,7 @@ class GeminiService {
 
   async sendMessage(message: string, onChunk: (chunk: string) => void): Promise<void> {
     if (!this.isInitialized || !this.chat) {
-        onChunk("AI service is not configured. The API_KEY environment variable is missing.");
-        return;
+        throw new Error("AI service is not configured. The API_KEY environment variable is missing.");
     }
 
     try {
@@ -131,7 +130,8 @@ class GeminiService {
       }
     } catch (error) {
       console.error("Gemini API error:", error);
-      onChunk("Sorry, I'm having trouble connecting to my brain right now. Please try again in a moment.");
+      // Re-throw the error to be handled consistently by the UI component.
+      throw error;
     }
   }
 }
