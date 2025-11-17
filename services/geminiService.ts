@@ -32,8 +32,7 @@ const findProductsFunctionDeclaration: FunctionDeclaration = {
     properties: {
       query: {
         type: Type.STRING,
-        description:
-          "The user's search query, e.g. 'iPhone 15' or 'MacBook Air'.",
+        description: "The user's search query, e.g. 'iPhone 15' or 'MacBook Air'.",
       },
     },
     required: ['query'],
@@ -42,28 +41,33 @@ const findProductsFunctionDeclaration: FunctionDeclaration = {
 
 // ------------------------------------------------------------------
 // 4️⃣  Service class
-class GeminiService {
-  private chat: Chat | null = null;
-  private isInitialized = false;
-
-  constructor() {
-    if (ai) {
-      this.chat = ai.chats.create({
-        model,
-        config: {
-          systemInstruction,
-          tools: [{ functionDeclarations: [findProductsFunctionDeclaration] }],
-        },
-      });
-      this.isInitialized = true;
-    } else {
-      console.error(
-        'API_KEY is not configured. The application will not be able to connect to Gemini.'
-      );
-    }
-  }
-
+const recommendProductsFn: FunctionDeclaration = {
+  name: 'recommend_products',
+  description:
+    'Return a list of products that best match the user\'s preferences such as category, price range, or keyword.',
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      category: { type: Type.STRING, description: 'Category name, e.g. "smartphone".' },
+      maxPrice: { type: Type.NUMBER, description: 'Maximum price in USD.' },
+      keyword:  { type: Type.STRING, description: 'Optional keyword to narrow the search.' },
+    },
+    required: [],                      // không bắt buộc, người dùng có thể chỉ cung cấp một trong các trường
+  },
+};
   // ----------------------------------------------------------------
+const getProductDetailFn: FunctionDeclaration = {
+  name: 'get_product_detail',
+  description:
+    'Fetch detailed information (specs, price, images) of a product given its unique productId.',
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      productId: { type: Type.STRING, description: 'The unique identifier of the product.' },
+    },
+    required: ['productId'],
+  },
+};
   // 5️⃣  GỌI BACKEND – URL lấy từ env công khai
   private async find_products(query: string): Promise<any> {
     const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? '';
