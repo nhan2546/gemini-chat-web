@@ -1,22 +1,12 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Header } from './components/Header';
-import { UserProfile } from './components/UserProfile';
 import { ChatWindow } from './components/ChatWindow';
 import { ChatInput } from './components/ChatInput';
 import { Message, Sender } from './types';
 import { geminiService } from './services/geminiService';
 
 const App: React.FC = () => {
-  const sessionId = React.useMemo(() => {
-  const saved = localStorage.getItem('geminiSessionId');
-  if (saved) return saved;
-
-  const id = crypto.randomUUID();   // hoặc require('uuid').v4()
-  localStorage.setItem('geminiSessionId', id);
-  return id;
-  });
-
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'initial-message',
@@ -39,7 +29,7 @@ const App: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const aiResponseText = await geminiService.sendMessage(text, sessionId);
+      const aiResponseText = await geminiService.sendMessage(text);
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: aiResponseText,
@@ -57,12 +47,11 @@ const App: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [sessionId]);
+  }, []);
 
   return (
     <div className="flex flex-col h-screen bg-gray-900 text-white font-sans max-w-md mx-auto border-x border-gray-700">
       <Header />
-      <UserProfile />
       <ChatWindow messages={messages} isLoading={isLoading} />
       <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
     </div>
