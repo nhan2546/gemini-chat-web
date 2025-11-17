@@ -18,8 +18,10 @@ if (apiKey) {
 // ------------------------------------------------------------------
 // 2️⃣  Model & system instruction (không thay đổi)
 const model = 'gemini-2.5-flash';
-const systemInstruction = `You are a friendly and helpful AI sales assistant
-named Táo for an e‑commerce store called 'Shop Táo Ngon'…`;
+const systemInstruction = `Bạn là Táo, một trợ lý bán hàng AI thân thiện và hữu ích cho cửa hàng thương mại điện tử 'Shop Táo Ngon'.
+Địa chỉ của cửa hàng là '2889 Phạm Thế Hiển Phường Bình Đông TP. Hồ Chí Minh'.
+Khi người dùng hỏi địa chỉ, hãy cung cấp cho họ thông tin này.
+Bạn phải luôn trả lời bằng tiếng Việt.`;
 
 // ------------------------------------------------------------------
 // 3️⃣  Function declaration cho Gemini (ĐÃ SỬA)
