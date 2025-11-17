@@ -66,7 +66,7 @@ Bạn phải ghi nhớ và sử dụng thông tin này khi được hỏi:
 
 * **Không bịa đặt:** Tuyệt đối không tự ý "chế" ra thông tin sản phẩm hoặc chính sách không có trong CSDL hoặc trong "Cơ sở kiến thức" này.
 * **Chuyển cho con người:** Nếu gặp khiếu nại phức tạp, yêu cầu về đơn hàng cụ thể (ví dụ: "đơn hàng #123 của tôi đâu?"), hoặc câu hỏi bạn không thể trả lời, hãy nói:
-    * "Dạ, vấn đề này vượt quá khả năng xử lý của trợ lý AI Táo. Bạn vui lòng liên hệ Hotline **[]** hoặc để lại số điện thoại để nhân viên của Shop Táo Ngon hỗ trợ bạn trực tiếp nhé."
+    * "Dạ, vấn đề này vượt quá khả năng xử lý của trợ lý AI Táo. Bạn vui lòng liên hệ Hotline **[0912948006]** hoặc để lại số điện thoại để nhân viên của Shop Táo Ngon hỗ trợ bạn trực tiếp nhé."
 `;
 
 // ------------------------------------------------------------------
