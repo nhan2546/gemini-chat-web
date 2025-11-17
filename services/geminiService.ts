@@ -22,21 +22,30 @@ const systemInstruction = `You are a friendly and helpful AI sales assistant
 named Táo for an e‑commerce store called 'Shop Táo Ngon'…`;
 
 // ------------------------------------------------------------------
-// 3️⃣  Function declaration cho Gemini
+// 3️⃣  Function declaration cho Gemini (ĐÃ SỬA)
 const findProductsFunctionDeclaration: FunctionDeclaration = {
   name: 'find_products',
   description:
-    'Finds products in the Shop Táo Ngon e‑commerce store database based on a search query.',
+    "Finds products in the Shop Táo Ngon e‑commerce store database based on a search query and/or filters.",
   parameters: {
     type: Type.OBJECT,
     properties: {
       query: {
         type: Type.STRING,
         description:
-          "The user's search query, e.g. 'iPhone 15' or 'MacBook Air'.",
+          "The user's search query, e.g. 'iPhone 15' or 'MacBook Air'. Optional if a filter is provided.",
+      },
+      // THÊM THUỘC TÍNH MỚI
+      filter: {
+        type: Type.STRING,
+        description: "A specific filter to apply to the search.",
+        // Dùng enum để AI biết chính xác nó có thể dùng những giá trị nào
+        enum: ['discounted', 'all'], 
       },
     },
-    required: ['query'],
+    // Không bắt buộc phải có query nữa, 
+    // vì người dùng có thể chỉ hỏi "có sản phẩm nào đang giảm giá không?"
+    required: [], 
   },
 };
 
@@ -64,14 +73,31 @@ class GeminiService {
   }
 
   // ----------------------------------------------------------------
-  // 5️⃣  GỌI BACKEND – URL lấy từ env công khai
-  private async find_products(query: string): Promise<any> {
+  // 5️⃣  GỌI BACKEND – URL lấy từ env công khai (ĐÃ SỬA)
+  // Sửa hàm để nhận một đối tượng args, thay vì chỉ query
+  private async find_products(args: { 
+    query?: string; 
+    filter?: string 
+  }): Promise<any> {
+    const { query, filter } = args; // Lấy query và filter từ args
     const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? '';
+    
     if (!baseUrl) {
       console.error('NEXT_PUBLIC_BACKEND_URL is not set');
       return { error: 'Backend URL missing' };
     }
-    const apiUrl = `${baseUrl}/api.php?q=${encodeURIComponent(query)}`;
+
+    // Dùng URLSearchParams để tạo query string động
+    const params = new URLSearchParams();
+    if (query) {
+      params.append('q', query);
+    }
+    if (filter) {
+      params.append('filter', filter);
+    }
+
+    // api.php?q=iphone&filter=discounted
+    const apiUrl = `${baseUrl}/api.php?${params.toString()}`;
 
     try {
       const resp = await fetch(apiUrl);
@@ -88,7 +114,7 @@ class GeminiService {
   }
 
   // ----------------------------------------------------------------
-  // 6️⃣  GỬI TIN NHẮN ĐẾN GEMINI
+  // 6️⃣  GỬI TIN NHẮN ĐẾN GEMINI (ĐÃ SỬA)
   async sendMessage(message: string): Promise<string> {
     if (!this.isInitialized || !this.chat) {
       return 'AI service is not configured. The API_KEY environment variable is missing.';
@@ -106,8 +132,12 @@ class GeminiService {
         console.log('Function call requested:', functionCalls);
         const call = functionCalls[0];
         if (call.name === 'find_products') {
-          const query = call.args.query as string;
-          const apiResult = await this.find_products(query);
+          // Lấy toàn bộ args, không chỉ query
+          const args = call.args as { query?: string; filter?: string };
+          
+          // Truyền toàn bộ args vào hàm
+          const apiResult = await this.find_products(args); 
+          
           const functionResponsePart = {
             functionResponse: { name: call.name, response: apiResult },
           };
