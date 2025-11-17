@@ -10,7 +10,7 @@ const App: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'initial-message',
-      text: "Hello! My name is Táo. I'm your AI sales assistant for Apple products. How can I help you today?",
+      text: "Chào bạn! Tôi là Táo, trợ lý AI của Shop Táo Ngon. Tôi có thể giúp bạn tìm kiếm thông tin về các sản phẩm Apple. Bạn cần tìm gì hôm nay?",
       sender: Sender.AI,
     },
   ]);
