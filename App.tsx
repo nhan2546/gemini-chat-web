@@ -10,7 +10,7 @@ const App: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'initial-message',
-      text: "Chào bạn! Tôi là Táo, trợ lý AI của Shop Táo Ngon. Tôi có thể giúp gì cho bạn hôm nay?",
+      text: "Hello! My name is Táo. I'm your AI sales assistant for Apple products. How can I help you today?",
       sender: Sender.AI,
     },
   ]);
@@ -40,7 +40,7 @@ const App: React.FC = () => {
       console.error('Error sending message to Gemini:', error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: 'Xin lỗi, Táo đang gặp sự cố kết nối. Vui lòng thử lại sau giây lát.',
+        text: 'Sorry, I seem to be having trouble connecting. Please try again in a moment.',
         sender: Sender.AI,
       };
       setMessages(prev => [...prev, errorMessage]);
