@@ -25,25 +25,31 @@ const App: React.FC = () => {
       sender: Sender.USER,
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    const aiMessageId = (Date.now() + 1).toString();
+    const aiPlaceholder: Message = {
+        id: aiMessageId,
+        text: '',
+        sender: Sender.AI,
+    };
+
+    setMessages(prev => [...prev, userMessage, aiPlaceholder]);
     setIsLoading(true);
 
     try {
-      const aiResponseText = await geminiService.sendMessage(text);
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: aiResponseText,
-        sender: Sender.AI,
-      };
-      setMessages(prev => [...prev, aiMessage]);
+      await geminiService.sendMessage(text, (chunk) => {
+        setMessages(prev => prev.map(m => 
+            m.id === aiMessageId 
+                ? { ...m, text: m.text + chunk } 
+                : m
+        ));
+      });
     } catch (error) {
       console.error('Error sending message to Gemini:', error);
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: 'Sorry, I seem to be having trouble connecting. Please try again in a moment.',
-        sender: Sender.AI,
-      };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => prev.map(m => 
+        m.id === aiMessageId 
+            ? { ...m, text: 'Xin lỗi, Táo đang gặp sự cố kết nối. Vui lòng thử lại sau giây lát.' } 
+            : m
+      ));
     } finally {
       setIsLoading(false);
     }
