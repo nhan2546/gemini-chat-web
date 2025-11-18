@@ -138,7 +138,8 @@ class GeminiService {
     // Dùng URLSearchParams để tạo query string động
     const params = new URLSearchParams();
     if (query) {
-      params.append('q', query);
+      // SỬA LỖI 2: Backend đang mong đợi 'query', không phải 'q'
+      params.append('query', query); 
     }
     if (filter) {
       params.append('filter', filter);
