@@ -16,86 +16,92 @@ if (apiKey) {
 }
 
 // ------------------------------------------------------------------
-// 2️⃣  Model & system instruction (không thay đổi)
+// 2️⃣  Model & system instruction (Cập nhật đầy đủ)
 const model = 'gemini-2.5-flash';
-const systemInstruction = `Bạn là Táo, một trợ lý bán hàng AI thân thiện và hữu ích cho cửa hàng thương mại điện tử 'Shop Táo Ngon'.
-Địa chỉ của cửa hàng là '2889 Phạm Thế Hiển Phường Bình Đông TP. Hồ Chí Minh'.
-Khi người dùng hỏi địa chỉ, hãy cung cấp cho họ thông tin này.
-Bạn phải luôn trả lời bằng tiếng Việt.
-### 1. Tính cách & Giọng điệu
 
+const systemInstruction = `Bạn là Táo, một trợ lý AI chuyên nghiệp, am hiểu và đáng tin cậy của cửa hàng 'Shop Táo Ngon'.
+Mục tiêu cao nhất của bạn là mang đến trải nghiệm tư vấn 5 sao, giúp khách hàng tìm đúng sản phẩm và cảm thấy hài lòng.
+Bạn PHẢI luôn trả lời bằng tiếng Việt.
+
+---
+### 1. Tính cách & Giọng điệu
 * **Chuyên gia thân thiện:** Luôn lịch sự, kiên nhẫn. Sử dụng từ ngữ dễ hiểu, nhiệt tình.
 * **Thấu hiểu:** Lắng nghe kỹ nhu cầu của khách.
 * **Chủ động:** Đừng chỉ trả lời. Hãy chủ động đặt câu hỏi và đưa ra gợi ý.
 
 ---
-
 ### 2. Cơ sở kiến thức (Thông tin cửa hàng)
-
-Bạn phải ghi nhớ và sử dụng thông tin này khi được hỏi:
-* **Địa chỉ:** '123 Đường Táo, Quận 1, TP. Hồ Chí Minh'.
-* **Chính sách Bảo hành (Giả định):** "Shop Táo Ngon bảo hành chính hãng 12 tháng cho sản phẩm mới. Đặc biệt, có chính sách 1 đổi 1 trong 30 ngày đầu nếu có lỗi từ nhà sản xuất."
-* **Chính sách Vận chuyển (Giả định):** "Shop miễn phí vận chuyển (freeship) cho đơn hàng trên 2.000.000đ. Đơn nội thành TP.HCM giao trong 24 giờ, các tỉnh khác từ 2-3 ngày."
-* **Phương thức Thanh toán (Giả định):** "Shop chấp nhận thanh toán khi nhận hàng (COD), chuyển khoản ngân hàng, và thanh toán qua thẻ (Visa, Mastercard)."
----
-### 3. Quy trình Tư vấn Vàng (4 Bước)
-
-**Bước 1: Chào hỏi & Khai thác nhu cầu**
-* Nếu khách hỏi chung chung (ví dụ: "tôi muốn mua laptop"), BẠN PHẢI hỏi thêm để làm rõ:
-    * "Bạn tìm sản phẩm cho nhu cầu gì là chính ạ (ví dụ: học tập, văn phòng, chơi game, đồ họa)?"
-    * "Tầm giá bạn mong muốn là khoảng bao nhiêu?"
-    * "Bạn có yêu thích thương hiệu nào cụ thể không?"
-
-**Bước 2: Sử dụng Công cụ & Đề xuất Sản phẩm**
-* Sử dụng công cụ \`find_products\` để tìm sản phẩm trong CSDL.
-* **Quan trọng:** Nếu khách hỏi về "khuyến mãi", "giảm giá", "sale", hoặc "giá rẻ", hãy chủ động dùng \`filter: 'discounted'\` khi gọi công cụ.
-* Trình bày sản phẩm: Nêu tên, giá (nêu bật giá giảm giá nếu có), và mô tả ngắn gọn tại sao nó phù hợp.
-* Nếu không tìm thấy sản phẩm, hãy xin lỗi và gợi ý một sản phẩm tương tự đang có hàng.
-
-**Bước 3: Tư vấn Toàn diện (Cross-sell & Up-sell)**
-* **Bán chéo (Cross-sell):** Sau khi khách chọn được sản phẩm chính (ví dụ: iPhone, MacBook), hãy luôn gợi ý phụ kiện liên quan: "Bạn có muốn tham khảo thêm ốp lưng, sạc nhanh, hoặc tai nghe Airpods để dùng kèm với iPhone mới không ạ?"
-* **Bán thêm (Up-sell):** Nếu khách phân vân, hãy gợi ý phiên bản cao cấp hơn một chút (nếu có) và nêu rõ lợi ích: "Nếu bạn có thể thêm một chút, phiên bản Pro Max sẽ cho bạn thời lượng pin tốt hơn và camera chụp ảnh chuyên nghiệp hơn."
-
-**Bước 4: Hỗ trợ Chốt đơn & Xử lý Phản đối**
-* Khi khách đồng ý, hãy hướng dẫn: "Bạn có thể thêm sản phẩm vào giỏ hàng và tiến hành thanh toán. Bạn có cần Táo hỗ trợ thêm gì không ạ?"
-* Nếu khách chê đắt, hãy nhấn mạnh vào giá trị: "Dạ, sản phẩm này có giá cao hơn nhưng đi kèm chính sách bảo hành 1 đổi 1 trong 30 ngày và được miễn phí vận chuyển ạ." hoặc gợi ý sản phẩm khác rẻ hơn.
+* **Địa chỉ:** '2889 Phạm Thế Hiển Phường Bình Đông TP. Hồ Chí Minh'.
+* **Hotline:** '0912948006'
+* **Chính sách Bảo hành (Giả định):** "Shop Táo Ngon bảo hành chính hãng 12 tháng. 1 đổi 1 trong 30 ngày đầu nếu có lỗi từ nhà sản xuất."
+* **Chính sách Vận chuyển (Giả định):** "Miễn phí vận chuyển (freeship) cho đơn hàng trên 2.000.000đ. Giao nội thành TP.HCM trong 24 giờ."
+* **Phương thức Thanh toán (Giả định):** "Shop chấp nhận COD, chuyển khoản ngân hàng, và thẻ (Visa, Mastercard)."
 
 ---
+### 3. Công cụ & Quy trình Tư vấn
+Bạn có 3 công cụ để sử dụng:
+1.  \`find_products\`: Tìm sản phẩm theo tên và/hoặc lọc (như 'discounted').
+2.  \`check_order_status\`: Kiểm tra trạng thái đơn hàng.
+3.  \`find_products_by_category\`: Tìm sản phẩm theo danh mục (ví dụ: 'phu-kien').
 
-### 4. Hạn chế & Chuyển tiếp (Quan trọng)
-
-* **Không bịa đặt:** Tuyệt đối không tự ý "chế" ra thông tin sản phẩm hoặc chính sách không có trong CSDL hoặc trong "Cơ sở kiến thức" này.
-* **Chuyển cho con người:** Nếu gặp khiếu nại phức tạp, yêu cầu về đơn hàng cụ thể (ví dụ: "đơn hàng #123 của tôi đâu?"), hoặc câu hỏi bạn không thể trả lời, hãy nói:
-    * "Dạ, vấn đề này vượt quá khả năng xử lý của trợ lý AI Táo. Bạn vui lòng liên hệ Hotline **0912948006** hoặc để lại số điện thoại để nhân viên của Shop Táo Ngon hỗ trợ bạn trực tiếp nhé."
+**Quy trình Tư vấn Vàng:**
+* Nếu khách hỏi chung chung (ví dụ: "mua laptop"), HÃY HỎI THÊM: "Bạn dùng cho nhu cầu gì (học tập, game) và tầm giá bao nhiêu ạ?"
+* Khi dùng \`find_products\`, HÃY LUÔN kiểm tra \`stock_quantity\`. Nếu sản phẩm hết hàng, hãy báo "đang tạm hết hàng" và gợi ý mẫu khác.
+* Sau khi khách chọn sản phẩm chính, HÃY DÙNG \`find_products_by_category({ category_slug: 'phu-kien' })\` để lấy danh sách phụ kiện thật và gợi ý.
+* Nếu khách hỏi "đơn hàng của tôi đâu?", HÃY HỎI: "Bạn vui lòng cho Táo xin Mã đơn hàng (Order ID) của bạn ạ." Sau đó, HÃY DÙNG \`check_order_status({ order_id: '...' })\` để tra cứu.
+* Nếu gặp khiếu nại, hãy chuyển tiếp: "Vấn đề này vượt quá khả năng của Táo, bạn vui lòng liên hệ Hotline **0912948006**."
 `;
 
 // ------------------------------------------------------------------
-// 3️⃣  Function declaration cho Gemini (ĐÃ SỬA)
+// 3️⃣  Function declaration (KHÔI PHỤC TOÀN BỘ 3 CÔNG CỤ)
+
+// CÔNG CỤ 1: TÌM SẢN PHẨM (Đã có)
 const findProductsFunctionDeclaration: FunctionDeclaration = {
   name: 'find_products',
   description:
-    "Finds products in the Shop Táo Ngon e‑commerce store database based on a search query and/or filters.",
+    "Tìm sản phẩm trong CSDL theo tên (query) và/hoặc bộ lọc (filter).",
   parameters: {
     type: Type.OBJECT,
     properties: {
-      query: {
-        type: Type.STRING,
-        description:
-          "The user's search query, e.g. 'iPhone 15' or 'MacBook Air'. Optional if a filter is provided.",
-      },
-      // THÊM THUỘC TÍNH MỚI
-      filter: {
-        type: Type.STRING,
-        description: "A specific filter to apply to the search.",
-        // Dùng enum để AI biết chính xác nó có thể dùng những giá trị nào
-        enum: ['discounted', 'all'], 
-      },
+      query: { type: Type.STRING, description: "Từ khóa tìm kiếm, ví dụ: 'iPhone 15'." },
+      filter: { type: Type.STRING, description: "Bộ lọc, ví dụ: 'discounted' (đang giảm giá).", enum: ['discounted', 'all'] },
     },
-    // Không bắt buộc phải có query nữa, 
-    // vì người dùng có thể chỉ hỏi "có sản phẩm nào đang giảm giá không?"
-    required: [], 
+    required: [],
   },
 };
+
+// CÔNG CỤ 2: KIỂM TRA ĐƠN HÀNG (KHÔI PHỤC)
+const checkOrderStatusFunctionDeclaration: FunctionDeclaration = {
+  name: 'check_order_status',
+  description: 'Kiểm tra trạng thái của một đơn hàng dựa trên ID đơn hàng.',
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      order_id: {
+        type: Type.STRING,
+        description: "Mã đơn hàng mà khách hàng cung cấp, ví dụ: '28' hoặc '15'.",
+      },
+    },
+    required: ['order_id'],
+  },
+};
+
+// CÔNG CỤ 3: TÌM THEO DANH MỤC (KHÔI PHỤC)
+const findProductsByCategoryFunctionDeclaration: FunctionDeclaration = {
+  name: 'find_products_by_category',
+  description: 'Tìm sản phẩm theo danh mục, ví dụ: tìm phụ kiện.',
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      category_slug: {
+        type: Type.STRING,
+        description: "Slug của danh mục, ví dụ: 'phu-kien', 'dien-thoai', 'laptop'.",
+      },
+    },
+    required: ['category_slug'],
+  },
+};
+
 
 // ------------------------------------------------------------------
 // 4️⃣  Service class
@@ -109,7 +115,12 @@ class GeminiService {
         model,
         config: {
           systemInstruction,
-          tools: [{ functionDeclarations: [findProductsFunctionDeclaration] }],
+          // KHÔI PHỤC ĐỦ 3 CÔNG CỤ
+          tools: [{ functionDeclarations: [
+            findProductsFunctionDeclaration,
+            checkOrderStatusFunctionDeclaration,
+            findProductsByCategoryFunctionDeclaration
+          ] }],
         },
       });
       this.isInitialized = true;
@@ -121,13 +132,8 @@ class GeminiService {
   }
 
   // ----------------------------------------------------------------
-  // 5️⃣  GỌI BACKEND – URL lấy từ env công khai (ĐÃ SỬA)
-  // Sửa hàm để nhận một đối tượng args, thay vì chỉ query
-  private async find_products(args: { 
-    query?: string; 
-    filter?: string 
-  }): Promise<any> {
-    const { query, filter } = args; // Lấy query và filter từ args
+  // 5️⃣  GỌI BACKEND – HÀM CHUNG CHO CẢ 3 ACTION (ĐÃ SỬA LỖI THAM SỐ)
+  private async callBackendApi(action: string, args: any): Promise<any> {
     const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? '';
     
     if (!baseUrl) {
@@ -135,17 +141,17 @@ class GeminiService {
       return { error: 'Backend URL missing' };
     }
 
-    // Dùng URLSearchParams để tạo query string động
+    // Xây dựng URL động
     const params = new URLSearchParams();
-    if (query) {
-      // SỬA LỖI 2: Backend đang mong đợi 'query', không phải 'q'
-      params.append('query', query); 
-    }
-    if (filter) {
-      params.append('filter', filter);
-    }
+    params.append('action', action); // Luôn thêm action
 
-    // api.php?q=iphone&filter=discounted
+    for (const key in args) {
+        // Lỗi 1 đã được sửa. Thống nhất tên tham số tìm kiếm là 'query' 
+        // để khớp với findProductsFunctionDeclaration.name. 
+        // api.php cần được sửa để đọc 'query'
+        params.append(key, args[key]);
+    }
+    
     const apiUrl = `${baseUrl}/api.php?${params.toString()}`;
 
     try {
@@ -153,17 +159,19 @@ class GeminiService {
       if (!resp.ok) {
         const txt = await resp.text();
         console.error(`Backend error ${resp.status}:`, txt);
-        return { error: `Backend error ${resp.status}` };
+        // Trả về lỗi để AI biết và thông báo lại cho người dùng
+        return { error: `Backend returned status ${resp.status}` };
       }
-      return await resp.json(); // => { products: [...] }
+      return await resp.json(); 
     } catch (e) {
       console.error('Failed to call backend API:', e);
-      return { error: 'Cannot reach backend' };
+      // Lỗi mạng hoặc Fetch thất bại
+      return { error: 'Network or Fetch failed. Check NEXT_PUBLIC_BACKEND_URL.' };
     }
   }
 
   // ----------------------------------------------------------------
-  // 6️⃣  GỬI TIN NHẮN ĐẾN GEMINI (ĐÃ SỬA)
+  // 6️⃣  GỬI TIN NHẮN ĐẾN GEMINI (NÂNG CẤP XỬ LÝ 3 CÔNG CỤ)
   async sendMessage(message: string): Promise<string> {
     if (!this.isInitialized || !this.chat) {
       return 'AI service is not configured. The API_KEY environment variable is missing.';
@@ -174,33 +182,48 @@ class GeminiService {
         message,
       });
 
-      // ----------------------------------------------------------------
-      // Nếu Gemini yêu cầu function call
       const functionCalls = response.functionCalls;
       if (functionCalls && functionCalls.length > 0) {
-        console.log('Function call requested:', functionCalls);
+        console.log('Function call requested:', functionCalls[0].name);
+        
         const call = functionCalls[0];
-        if (call.name === 'find_products') {
-          // Lấy toàn bộ args, không chỉ query
-          const args = call.args as { query?: string; filter?: string };
-          
-          // Truyền toàn bộ args vào hàm
-          const apiResult = await this.find_products(args); 
-          
-          const functionResponsePart = {
-            functionResponse: { name: call.name, response: apiResult },
-          };
-          const functionResponseMessage: SendMessageParameters = {
-            message: [functionResponsePart],
-          };
-          response = await this.chat.sendMessage(functionResponseMessage);
+        const args = call.args;
+        let apiResult: any;
+
+        // Xử lý cả 3 công cụ
+        switch (call.name) {
+          case 'find_products':
+            apiResult = await this.callBackendApi('find_products', args);
+            break;
+            
+          case 'check_order_status':
+            apiResult = await this.callBackendApi('check_order_status', args);
+            break;
+
+          case 'find_products_by_category':
+            apiResult = await this.callBackendApi('find_products_by_category', args);
+            break;
+            
+          default:
+            console.warn(`Unknown function call: ${call.name}`);
+            apiResult = { error: 'Unknown function' };
         }
+
+        // Gửi kết quả API trở lại cho Gemini
+        const functionResponsePart = {
+          functionResponse: { name: call.name, response: apiResult },
+        };
+        const functionResponseMessage: SendMessageParameters = {
+          message: [functionResponsePart],
+        };
+        response = await this.chat.sendMessage(functionResponseMessage);
       }
 
       return response.text;
     } catch (error) {
+      // Lỗi này là nguyên nhân gây ra thông báo "Sorry, I'm having trouble connecting."
       console.error('Gemini API error:', error);
-      return "Sorry, I'm having trouble connecting. Please try again later.";
+      return "Sorry, I'm having trouble connecting. Please try again later. (Lỗi mạng hoặc kết nối)";
     }
   }
 }
